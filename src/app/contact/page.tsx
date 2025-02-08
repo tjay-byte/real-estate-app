@@ -1,3 +1,5 @@
+'use client';
+
 import Navbar from '@/components/Navbar';
 import { EnvelopeIcon, PhoneIcon, MapPinIcon } from '@heroicons/react/24/outline';
 
@@ -12,7 +14,7 @@ export default function Contact() {
             <div className="mx-auto max-w-xl lg:mx-0 lg:max-w-lg">
               <h2 className="text-3xl font-bold tracking-tight text-gray-900">Get in touch</h2>
               <p className="mt-6 text-lg leading-8 text-gray-600">
-                Looking for the perfect commercial property? Contact us today and let our experienced team help you find exactly what you're looking for.
+                Looking for the perfect commercial property? Contact us today and let our experienced team help you find exactly what you&apos;re looking for.
               </p>
               <dl className="mt-10 space-y-4 text-base leading-7 text-gray-600">
                 <div className="flex gap-x-4">
