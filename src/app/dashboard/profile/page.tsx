@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { db, storage } from '@/lib/firebase';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
@@ -8,6 +8,7 @@ import { useAuth } from '@/lib/auth';
 import { useRouter } from 'next/navigation';
 import { isAgent } from '@/lib/roles';
 import toast from 'react-hot-toast';
+import Image from 'next/image';
 
 interface AgentProfile {
   displayName: string;
@@ -38,16 +39,7 @@ export default function ProfilePage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
-  useEffect(() => {
-    if (!user || !isAgent(userRole)) {
-      router.push('/');
-      return;
-    }
-
-    fetchProfile();
-  }, [user, userRole, router]);
-
-  const fetchProfile = async () => {
+  const fetchProfile = useCallback(async () => {
     if (!user?.uid) return;
 
     try {
@@ -91,7 +83,15 @@ export default function ProfilePage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    if (!user || !isAgent(userRole)) {
+      router.push('/');
+      return;
+    }
+    fetchProfile();
+  }, [user, userRole, router, fetchProfile]);
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files?.[0] || !user?.uid) return;
@@ -158,10 +158,12 @@ export default function ProfilePage() {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="flex items-center space-x-6 mb-6">
           <div className="shrink-0">
-            <img
+            <Image
               className="h-32 w-32 object-cover rounded-full"
               src={profile.photoURL || '/placeholder-avatar.png'}
               alt="Profile photo"
+              width={128}
+              height={128}
             />
           </div>
           <label className="block">

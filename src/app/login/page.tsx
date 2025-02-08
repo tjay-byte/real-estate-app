@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import { useAuth } from '@/lib/auth';
-import { isAgent } from '@/lib/roles';
 import toast from 'react-hot-toast';
 
 export default function Login() {
