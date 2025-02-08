@@ -1,0 +1,44 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    // Simple check for image type and size
+    function isValidFile() {
+      return request.resource.contentType.matches('image/.*') &&
+             request.resource.size < 5 * 1024 * 1024;
+    }
+
+    // Property images - Simplified rules for development
+    match /properties/{userId}/{imageId} {
+      // Anyone can read images
+      allow read: if true;
+
+      // Any authenticated user can upload images during development
+      allow create: if isAuthenticated() && isValidFile();
+
+      // Owner can update and delete their images
+      allow update, delete: if isAuthenticated() &&
+        request.auth.uid == userId;
+    }
+
+    // Agent profile photos
+    match /agent-photos/{userId} {
+      allow read: if true;
+      allow write: if isAuthenticated() &&
+        request.auth.uid == userId &&
+        isValidFile();
+    }
+
+    // User profile images
+    match /users/{userId}/{imageId} {
+      allow read: if true;
+      allow write: if isAuthenticated() &&
+        request.auth.uid == userId &&
+        isValidFile();
+    }
+  }
+}

@@ -1,0 +1,91 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+
+    function getUserRole() {
+      let userDoc = get(/databases/$(database)/documents/users/$(request.auth.uid));
+      return userDoc != null ? userDoc.data.role : null;
+    }
+
+    function hasRole(role) {
+      return getUserRole() == role;
+    }
+
+    function isAgent() {
+      let role = getUserRole();
+      return role == 'agent' || role == 'admin';
+    }
+
+    function isAdmin() {
+      return hasRole('admin');
+    }
+
+    // Users collection
+    match /users/{userId} {
+      // Anyone can read basic user info
+      allow read: if true;
+
+      // Users can only write their own document
+      allow write: if isAuthenticated() && isOwner(userId);
+    }
+
+    // Agents collection
+    match /agents/{agentId} {
+      // Anyone can read agent profiles
+      allow read: if true;
+
+      // Only agents can create/update their own profile
+      allow write: if isAuthenticated() &&
+        isOwner(agentId) &&
+        isAgent();
+    }
+
+    // Properties collection
+    match /properties/{propertyId} {
+      // Anyone can read properties
+      allow read: if true;
+
+      // Any authenticated user can create properties during development
+      allow create: if isAuthenticated();
+
+      // Only the owner can update/delete their properties
+      allow update, delete: if isAuthenticated() &&
+        resource.data.agentId == request.auth.uid;
+    }
+
+    // Property inquiries
+    match /inquiries/{inquiryId} {
+      // Users can create inquiries if authenticated
+      allow create: if isAuthenticated();
+
+      // Users can read their own inquiries
+      // Agents can read inquiries for their properties
+      allow read: if isAuthenticated() && (
+        resource.data.userId == request.auth.uid ||
+        resource.data.agentId == request.auth.uid
+      );
+
+      // Only the agent or admin can update the status
+      allow update: if isAuthenticated() && (
+        resource.data.agentId == request.auth.uid ||
+        isAdmin()
+      );
+
+      // Only admin can delete inquiries
+      allow delete: if isAdmin();
+    }
+
+    // Property views collection (for analytics)
+    match /propertyViews/{viewId} {
+      allow read, write: if true;
+    }
+  }
+}
