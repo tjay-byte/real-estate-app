@@ -1,6 +1,5 @@
-import { getFirestore } from 'firebase/firestore';
 import { db } from './firebase';
-import { collection, doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 
 // Define collection names as constants
 export const COLLECTIONS = {
