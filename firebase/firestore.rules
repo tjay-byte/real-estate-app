@@ -56,8 +56,17 @@ service cloud.firestore {
       // Any authenticated user can create properties during development
       allow create: if isAuthenticated();
 
-      // Only the owner can update/delete their properties
-      allow update, delete: if isAuthenticated() &&
+      // Allow view count updates for any authenticated user
+      allow update: if isAuthenticated() && (
+        // Allow the owner to update everything
+        resource.data.agentId == request.auth.uid ||
+        // Allow view count updates only
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views']) &&
+         request.resource.data.views == resource.data.views + 1)
+      );
+
+      // Only the owner can delete their properties
+      allow delete: if isAuthenticated() &&
         resource.data.agentId == request.auth.uid;
     }
 

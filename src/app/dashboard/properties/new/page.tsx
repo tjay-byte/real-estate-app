@@ -193,7 +193,7 @@ export default function NewProperty() {
       <div className="py-10">
         <header>
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <h1 className="text-3xl font-bold leading-tight tracking-tight text-gray-900">
+            <h1 className="text-3xl font-bold leading-tight tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-orange-600 to-orange-400">
               Add New Property
             </h1>
           </div>
@@ -215,7 +215,7 @@ export default function NewProperty() {
                       required
                       value={formData.title}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                      className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
                     />
                   </div>
 
@@ -229,7 +229,7 @@ export default function NewProperty() {
                       required
                       value={formData.location}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                      className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
                     >
                       <option value="">Select location</option>
                       <option value="Potchefstroom">Potchefstroom</option>
@@ -250,7 +250,7 @@ export default function NewProperty() {
                       min="0"
                       value={formData.price}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                      className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
                     />
                   </div>
 
@@ -264,7 +264,7 @@ export default function NewProperty() {
                       required
                       value={formData.type}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                      className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
                     >
                       <option value="commercial">Commercial Land</option>
                       <option value="plot">Plot</option>
@@ -285,7 +285,7 @@ export default function NewProperty() {
                         min="0"
                         value={formData.size}
                         onChange={handleInputChange}
-                        className="block w-full rounded-none rounded-l-md border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                        className="block w-full rounded-none rounded-l-md border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
                       />
                       <select
                         name="sizeUnit"
@@ -310,7 +310,7 @@ export default function NewProperty() {
                       required
                       value={formData.status}
                       onChange={handleInputChange}
-                      className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                      className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
                     >
                       <option value="active">Active</option>
                       <option value="pending">Pending</option>
@@ -331,7 +331,7 @@ export default function NewProperty() {
                     rows={4}
                     value={formData.description}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                    className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 shadow-sm focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
                   />
                 </div>
 
@@ -346,13 +346,13 @@ export default function NewProperty() {
                       id="features"
                       value={feature}
                       onChange={(e) => setFeature(e.target.value)}
-                      className="block w-full rounded-l-md border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-blue-500 focus:ring-blue-500 sm:text-sm"
+                      className="block w-full rounded-l-md border border-gray-300 bg-white px-3 py-2 text-gray-900 focus:border-orange-500 focus:ring-orange-500 sm:text-sm"
                       placeholder="Add a feature"
                     />
                     <button
                       type="button"
                       onClick={handleAddFeature}
-                      className="inline-flex items-center rounded-r-md border border-l-0 border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100"
+                      className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
                     >
                       Add
                     </button>
@@ -361,16 +361,15 @@ export default function NewProperty() {
                     {formData.features.map((f) => (
                       <span
                         key={f}
-                        className="inline-flex items-center rounded-full bg-blue-100 px-3 py-0.5 text-sm font-medium text-blue-800"
+                        className="inline-flex items-center rounded-full bg-orange-100 px-3 py-0.5 text-sm font-medium text-orange-800"
                       >
                         {f}
                         <button
                           type="button"
                           onClick={() => handleRemoveFeature(f)}
-                          className="ml-1.5 inline-flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full text-blue-600 hover:bg-blue-200 hover:text-blue-900"
+                          className="ml-2 text-orange-600 hover:text-orange-900"
                         >
-                          <span className="sr-only">Remove {f}</span>
-                          ×
+                          Remove
                         </button>
                       </span>
                     ))}
@@ -388,7 +387,12 @@ export default function NewProperty() {
                     multiple
                     accept="image/*"
                     onChange={handleImageChange}
-                    className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                    className="mt-1 block w-full text-sm text-slate-500
+                      file:mr-4 file:py-2 file:px-4
+                      file:rounded-full file:border-0
+                      file:text-sm file:font-semibold
+                      file:bg-orange-50 file:text-orange-700
+                      hover:file:bg-orange-100"
                   />
                 </div>
 
@@ -397,9 +401,7 @@ export default function NewProperty() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className={`inline-flex justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                      isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
-                    }`}
+                    className="inline-flex justify-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 disabled:opacity-50"
                   >
                     {isSubmitting ? 'Creating...' : 'Create Property'}
                   </button>

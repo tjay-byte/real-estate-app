@@ -210,23 +210,23 @@ export default function Dashboard() {
 
                 <div className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">
                   <dt className="truncate text-base font-semibold text-gray-900">Properties by Status</dt>
-                  <dd className="mt-2">
-                    <div className="flex items-baseline justify-between space-x-4">
-                      <div className="text-base">
+                  <dd className="mt-4">
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium text-gray-700">Active</span>
                         <span className="font-bold text-green-600 text-lg">{stats.activeListings}</span>
-                        <span className="ml-1 font-medium text-gray-700">Active</span>
                       </div>
-                      <div className="text-base">
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium text-gray-700">Pending</span>
                         <span className="font-bold text-yellow-600 text-lg">
                           {properties.filter(p => p.status === 'pending').length}
                         </span>
-                        <span className="ml-1 font-medium text-gray-700">Pending</span>
                       </div>
-                      <div className="text-base">
+                      <div className="flex items-center justify-between">
+                        <span className="font-medium text-gray-700">Sold</span>
                         <span className="font-bold text-gray-600 text-lg">
                           {properties.filter(p => p.status === 'sold').length}
                         </span>
-                        <span className="ml-1 font-medium text-gray-700">Sold</span>
                       </div>
                     </div>
                   </dd>
@@ -234,14 +234,18 @@ export default function Dashboard() {
 
                 <div className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">
                   <dt className="truncate text-base font-semibold text-gray-900">Total Property Value</dt>
-                  <dd className="mt-2 text-4xl font-bold tracking-tight text-orange-600">
-                    R {properties.reduce((sum, prop) => sum + prop.price, 0).toLocaleString()}
-                  </dd>
-                  <div className="mt-2">
-                    <div className="text-base font-medium text-gray-700">
-                      Avg: R {properties.length > 0 ? Math.round(properties.reduce((sum, prop) => sum + prop.price, 0) / properties.length).toLocaleString() : 0}
+                  <dd className="mt-2">
+                    <div className="flex flex-col">
+                      <div className="flex items-baseline">
+                        <span className="text-2xl sm:text-3xl font-bold tracking-tight text-orange-600 truncate">
+                          R{properties.reduce((sum, prop) => sum + prop.price, 0).toLocaleString()}
+                        </span>
+                      </div>
+                      <div className="mt-2 text-sm sm:text-base font-medium text-gray-600">
+                        Avg: R{properties.length > 0 ? Math.round(properties.reduce((sum, prop) => sum + prop.price, 0) / properties.length).toLocaleString() : 0}
+                      </div>
                     </div>
-                  </div>
+                  </dd>
                 </div>
 
                 <div className="overflow-hidden rounded-lg bg-white px-4 py-5 shadow sm:p-6">
@@ -254,9 +258,9 @@ export default function Dashboard() {
                           return acc;
                         }, {} as Record<string, number>)
                       ).map(([location, count]) => (
-                        <div key={location} className="flex items-center justify-between text-base">
-                          <span className="font-medium text-gray-700">{location}</span>
-                          <span className="font-bold text-orange-600">{count}</span>
+                        <div key={location} className="flex items-center justify-between text-sm">
+                          <span className="font-medium text-gray-700 break-words min-w-0 mr-2">{location}</span>
+                          <span className="font-bold text-orange-600 flex-shrink-0">{count}</span>
                         </div>
                       ))}
                     </div>

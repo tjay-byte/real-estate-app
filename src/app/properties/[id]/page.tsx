@@ -73,11 +73,16 @@ export default function PropertyDetails() {
 
         setProperty(propertyData);
 
-        // Increment view count if not the owner viewing
+        // Try to increment view count if not the owner viewing
         if (user?.uid !== propertyData.agentId) {
-          await updateDoc(doc(db, 'properties', propertyId), {
-            views: increment(1)
-          });
+          try {
+            await updateDoc(doc(db, 'properties', propertyId), {
+              views: increment(1)
+            });
+          } catch (viewError) {
+            // Silently handle view count update error
+            console.debug('View count not updated:', viewError);
+          }
         }
       } catch (error) {
         console.error('Error fetching property:', error);
@@ -197,10 +202,10 @@ export default function PropertyDetails() {
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-12">
         <div className="bg-white rounded-lg shadow-lg overflow-hidden">
           {/* Image Gallery */}
-          <div className="relative h-96">
+          <div className="relative h-64 sm:h-96">
             {property.images && property.images.length > 0 ? (
               <>
                 <img
@@ -209,22 +214,28 @@ export default function PropertyDetails() {
                   className="w-full h-full object-cover"
                 />
                 {property.images.length > 1 && (
-                  <div className="absolute inset-0 flex items-center justify-between p-4">
+                  <div className="absolute inset-0 flex items-center justify-between p-2 sm:p-4">
                     <button
                       onClick={handlePreviousImage}
-                      className="bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75"
+                      className="bg-black bg-opacity-50 text-white w-8 h-8 sm:w-10 sm:h-10 rounded-full hover:bg-opacity-75 flex items-center justify-center"
+                      aria-label="Previous image"
                     >
-                      ←
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 sm:w-6 sm:h-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 19.5L8.25 12l7.5-7.5" />
+                      </svg>
                     </button>
                     <button
                       onClick={handleNextImage}
-                      className="bg-black bg-opacity-50 text-white p-2 rounded-full hover:bg-opacity-75"
+                      className="bg-black bg-opacity-50 text-white w-8 h-8 sm:w-10 sm:h-10 rounded-full hover:bg-opacity-75 flex items-center justify-center"
+                      aria-label="Next image"
                     >
-                      →
+                      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 sm:w-6 sm:h-6">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+                      </svg>
                     </button>
                   </div>
                 )}
-                <div className="absolute bottom-4 right-4 bg-black bg-opacity-50 text-white px-2 py-1 rounded">
+                <div className="absolute bottom-4 right-4 bg-black bg-opacity-50 text-white px-2 py-1 rounded text-sm">
                   {currentImageIndex + 1} / {property.images.length}
                 </div>
               </>
@@ -236,14 +247,14 @@ export default function PropertyDetails() {
           </div>
 
           {/* Property Details */}
-          <div className="p-8">
-            <div className="flex justify-between items-start">
+          <div className="p-4 sm:p-8">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4">
               <div>
-                <h1 className="text-3xl font-bold text-gray-900">{property.title}</h1>
-                <p className="mt-2 text-lg text-gray-600">{property.location}</p>
+                <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">{property.title}</h1>
+                <p className="mt-2 text-base sm:text-lg text-gray-600">{property.location}</p>
               </div>
-              <div className="text-right">
-                <p className="text-3xl font-bold text-gray-900">
+              <div className="sm:text-right">
+                <p className="text-2xl sm:text-3xl font-bold text-gray-900">
                   R {property.price.toLocaleString()}
                 </p>
                 <p className="mt-1 text-sm text-gray-500">
@@ -252,80 +263,70 @@ export default function PropertyDetails() {
               </div>
             </div>
 
+            {/* Property Type and Status */}
+            <div className="mt-6">
+              <div className="flex flex-wrap gap-2">
+                <span className="px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-800">
+                  {property.type}
+                </span>
+                <span className="px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                  {property.status}
+                </span>
+              </div>
+            </div>
+
+            {/* Description */}
             <div className="mt-6">
               <h2 className="text-xl font-semibold text-gray-900">Description</h2>
               <p className="mt-2 text-gray-600 whitespace-pre-line">{property.description}</p>
             </div>
 
-            <div className="mt-6">
-              <h2 className="text-xl font-semibold text-gray-900">Features</h2>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {property.features.map((feature, index) => (
-                  <span
-                    key={index}
-                    className="inline-flex items-center rounded-full bg-orange-100 px-3 py-0.5 text-sm font-medium text-orange-800"
-                  >
-                    {feature}
-                  </span>
-                ))}
+            {/* Features */}
+            {property.features && property.features.length > 0 && (
+              <div className="mt-6">
+                <h2 className="text-xl font-semibold text-gray-900">Features</h2>
+                <ul className="mt-2 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
+                  {property.features.map((feature, index) => (
+                    <li key={index} className="flex items-center text-gray-600">
+                      <svg className="h-5 w-5 text-orange-500 mr-2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
               </div>
-            </div>
+            )}
 
-            <div className="mt-6">
-              <h2 className="text-xl font-semibold text-gray-900">Property Details</h2>
-              <dl className="mt-2 grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Property Type</dt>
-                  <dd className="mt-1 text-sm text-gray-900">
-                    {property.type.charAt(0).toUpperCase() + property.type.slice(1)}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Status</dt>
-                  <dd className="mt-1 text-sm text-gray-900">
-                    {property.status.charAt(0).toUpperCase() + property.status.slice(1)}
-                  </dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Listed By</dt>
-                  <dd className="mt-1 text-sm text-gray-900">{property.agentName}</dd>
-                </div>
-                <div>
-                  <dt className="text-sm font-medium text-gray-500">Views</dt>
-                  <dd className="mt-1 text-sm text-gray-900">{property.views}</dd>
-                </div>
-              </dl>
-            </div>
-
-            {/* Contact Agent Button */}
-            <div className="mt-8 flex justify-end">
+            {/* Contact Button */}
+            <div className="mt-8">
               <button
                 onClick={handleContactAgent}
-                className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                className="w-full sm:w-auto px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
               >
                 Contact Agent
               </button>
             </div>
           </div>
         </div>
+      </div>
 
-        {/* Contact Modal */}
-        <Dialog
-          open={isContactModalOpen}
-          onClose={() => setIsContactModalOpen(false)}
-          className="relative z-50"
-        >
-          {/* Background overlay */}
-          <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
+      {/* Contact Modal */}
+      <Dialog
+        open={isContactModalOpen}
+        onClose={() => setIsContactModalOpen(false)}
+        className="relative z-50"
+      >
+        <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
 
-          {/* Modal container */}
-          <div className="fixed inset-0 flex items-center justify-center p-4">
-            <Dialog.Panel className="mx-auto max-w-lg rounded-lg bg-white p-6 shadow-xl">
-              <Dialog.Title className="text-lg font-medium leading-6 text-gray-900">
-                Contact Agent about {property?.title}
-              </Dialog.Title>
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <Dialog.Panel className="mx-auto max-w-lg w-full rounded-xl bg-white p-4 sm:p-6">
+            <Dialog.Title className="text-xl font-semibold text-gray-900">
+              Contact Agent
+            </Dialog.Title>
 
-              <form onSubmit={handleSubmitInquiry} className="mt-4 space-y-4">
+            <form onSubmit={handleSubmitInquiry} className="mt-4">
+              <div className="space-y-4">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-gray-700">
                     Name *
@@ -337,7 +338,7 @@ export default function PropertyDetails() {
                     required
                     value={formData.name}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500 sm:text-sm"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500"
                   />
                 </div>
 
@@ -352,13 +353,13 @@ export default function PropertyDetails() {
                     required
                     value={formData.email}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500 sm:text-sm"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500"
                   />
                 </div>
 
                 <div>
                   <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
-                    Phone Number
+                    Phone
                   </label>
                   <input
                     type="tel"
@@ -366,7 +367,7 @@ export default function PropertyDetails() {
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500 sm:text-sm"
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500"
                   />
                 </div>
 
@@ -381,34 +382,31 @@ export default function PropertyDetails() {
                     rows={4}
                     value={formData.message}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500 sm:text-sm text-gray-900"
-                    placeholder="Hello, I would like to inquire about this property. I'm particularly interested in viewing it and would appreciate more information about..."
+                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500"
                   />
                 </div>
+              </div>
 
-                <div className="mt-6 flex justify-end gap-4">
-                  <button
-                    type="button"
-                    onClick={() => setIsContactModalOpen(false)}
-                    className="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className={`inline-flex justify-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 ${
-                      isSubmitting ? 'opacity-50 cursor-not-allowed' : ''
-                    }`}
-                  >
-                    {isSubmitting ? 'Sending...' : 'Send Message'}
-                  </button>
-                </div>
-              </form>
-            </Dialog.Panel>
-          </div>
-        </Dialog>
-      </div>
+              <div className="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2">
+                <button
+                  type="button"
+                  onClick={() => setIsContactModalOpen(false)}
+                  className="mt-3 sm:mt-0 w-full sm:w-auto inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full sm:w-auto inline-flex justify-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 disabled:opacity-50"
+                >
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
+                </button>
+              </div>
+            </form>
+          </Dialog.Panel>
+        </div>
+      </Dialog>
     </div>
   );
 }
