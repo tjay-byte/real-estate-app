@@ -1,0 +1,5 @@
+[33md90b72f[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Update: Mobile responsive layout and deployment configuration
+[33m134c5a3[m[33m ([m[1;31morigin/feature/dashboard-mobile-updates[m[33m, [m[1;32mfeature/dashboard-mobile-updates[m[33m)[m feat: Add mobile responsive layout and fix dashboard card text cutoff issues
+[33md338330[m Fix Firebase Storage initialization
+[33m749bac6[m Fix ESLint configuration, unused imports, and add proper Next.js config
+[33ma716e1e[m Fix build errors and warnings

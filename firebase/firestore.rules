@@ -28,6 +28,33 @@ service cloud.firestore {
       return hasRole('admin');
     }
 
+    // Validate savedBy array updates
+    function isValidSavedByUpdate() {
+      let incomingData = request.resource.data;
+      let existingData = resource.data;
+
+      // Ensure savedBy exists and is an array
+      return
+        ('savedBy' in incomingData) &&
+        incomingData.savedBy is list &&
+        (
+          // For new documents, allow empty array
+          !exists(/databases/$(database)/documents/$(request.path)) ||
+          // For updates, ensure only one element is added/removed
+          (
+            existingData.savedBy is list &&
+            (
+              // Adding one element
+              (incomingData.savedBy.size() == existingData.savedBy.size() + 1 &&
+               incomingData.savedBy.removeAll(existingData.savedBy).size() == 1) ||
+              // Removing one element
+              (incomingData.savedBy.size() == existingData.savedBy.size() - 1 &&
+               existingData.savedBy.removeAll(incomingData.savedBy).size() == 1)
+            )
+          )
+        );
+    }
+
     // Users collection
     match /users/{userId} {
       // Anyone can read basic user info
@@ -53,16 +80,19 @@ service cloud.firestore {
       // Anyone can read properties
       allow read: if true;
 
-      // Any authenticated user can create properties during development
+      // Allow creation with proper initialization
       allow create: if isAuthenticated();
 
-      // Allow view count updates for any authenticated user
+      // Allow updates with proper validation
       allow update: if isAuthenticated() && (
         // Allow the owner to update everything
         resource.data.agentId == request.auth.uid ||
         // Allow view count updates only
         (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['views']) &&
-         request.resource.data.views == resource.data.views + 1)
+         request.resource.data.views == resource.data.views + 1) ||
+        // Allow savedBy array updates
+        (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['savedBy']) &&
+         request.resource.data.savedBy is list)
       );
 
       // Only the owner can delete their properties

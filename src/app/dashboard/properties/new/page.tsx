@@ -156,10 +156,11 @@ export default function NewProperty() {
         agentId: user.uid,
         agentName: user.displayName || 'Unknown Agent',
         images: uploadedImages.map(img => img.url),
-        imagePaths: uploadedImages.map(img => img.path), // Store paths for future deletion if needed
+        imagePaths: uploadedImages.map(img => img.path),
         createdAt: new Date(),
         updatedAt: new Date(),
         views: 0,
+        savedBy: [], // Initialize as empty array
       };
 
       // Add to Firestore

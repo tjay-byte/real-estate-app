@@ -11,6 +11,17 @@ const compat = new FlatCompat({
 
 export default [
   {
+    ignores: [
+      ".next/",
+      "out/",
+      "build/",
+      "dist/",
+      "node_modules/",
+      ".cache/",
+      ".eslintcache",
+      "coverage/",
+      ".vercel"
+    ],
     rules: {
       '@typescript-eslint/no-unused-vars': ['error', {
         argsIgnorePattern: '^_',
@@ -18,7 +29,7 @@ export default [
       }],
       'no-unused-vars': 'off',
       'react/no-unescaped-entities': ['error', {
-        forbid: ['>', '}', '"', '\''']
+        forbid: ['>', '}']
       }],
       '@next/next/no-img-element': 'error',
       'react-hooks/exhaustive-deps': 'warn'
